@@ -45,7 +45,7 @@ jobs:
       - name: Run the build
         run: npm run build
       - name: Publish to NPM
-        run: npm run publish --access public
+        run: npm run publishing --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -66,6 +66,6 @@ jobs:
       - name: Run the build
         run: npm run build
       - name: Publish to GPR
-        run: npm run publish
+        run: npm run publishing
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
