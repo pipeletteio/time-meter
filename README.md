@@ -26,3 +26,52 @@
 ```bash
 npm install @pipeletteio/time-meter
 ```
+
+## Example:
+```javascript
+const { TimeMeter } = require('@pipeletteio/time-meter');
+
+const meter = new TimeMeter();
+
+// Should log: [0, xxxx]
+console.log(meter.next());
+
+// Should log: [1, xxxx]
+setTimeout(() => {
+  console.log(meter.next());
+}, 1000);
+```
+
+A shared time meter instance can be retreived from the package:
+```javascript
+const { meter } = require('@pipeletteio/time-meter');
+```
+
+## API
+
+#### TimeMeter.constructor
+
+Create a new TimeMeter instance.
+
+|   argument   |              type             |                               details                               |
+|--------------|-------------------------------|---------------------------------------------------------------------|
+|    initial   | `[number, number]` or `null`  | A result of 'process.hrtime' to be used as initial time. (optional) |
+
+Return a new `TimeMeter` instance.
+
+Example:
+```javascript
+new TimeMeter(process.hrtime());
+```
+
+#### TimeMeter.prototype.next
+
+Get the time delay from the last 'next' call or instance construction.
+
+Return an array of 2 number like `[seconds, nanoseconds]: [number, number]`.
+
+Example:
+```javascript
+const meter = new TimeMeter();
+setTimeout(() => console.log(meter.next()), 1000);
+```
