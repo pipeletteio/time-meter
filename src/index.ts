@@ -20,5 +20,7 @@ export class TimeMeter {
   }
 }
 
-/** A shared time-meter. */
+/**
+ * A shared time-meter.
+ */
 export const meter = new TimeMeter();

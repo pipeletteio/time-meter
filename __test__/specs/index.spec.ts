@@ -1,4 +1,4 @@
-import { TimeMeter } from '../../../src/index';
+import { TimeMeter } from '@/src/index';
 
 test('should TimeMeter work fine', (done) => {
   const timeMeter = new TimeMeter(process.hrtime());

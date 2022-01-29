@@ -5,7 +5,7 @@ on:
     branches-ignore:
       - '**'
     tags:
-      - v?[0-9]+.[0-9]+.[0-9]+
+      - ^v?\d+\.\d+\.\d+-\w+((\.\d+)*|\.\w+(\.\d+)+)$
 
 jobs:
   tests:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x, 13.x]
+        node-version: [12.x, 14.x, 16.x, 17.x]
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v1
@@ -23,15 +23,22 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install NPM dependencies
         run: npm ci
-      - name: Run the build
-        run: npm run build
-      - name: Run test converage
+      - name: Run types check
+        run: npm run type-check
+      - name: Run linter
+        run: npm run lint
+      - name: Run coverage
         run: npm run coverage
+      - name: Run the packaging
+        run: npm run package
 
   publish-npm:
     name: Publish on NPM
     runs-on: ubuntu-latest
     needs: [tests]
+    strategy:
+      matrix:
+        node-version: [16.x]
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v1
@@ -42,10 +49,10 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - name: Install NPM dependencies
         run: npm ci
-      - name: Run the build
-        run: npm run build
+      - name: Run the packaging
+        run: npm run package
       - name: Publish to NPM
-        run: npm run publishing --access public
+        run: npm run publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -53,6 +60,9 @@ jobs:
     name: Publish on GPR
     runs-on: ubuntu-latest
     needs: [tests]
+    strategy:
+      matrix:
+        node-version: [16.x]
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v1
@@ -63,9 +73,9 @@ jobs:
           registry-url: https://npm.pkg.github.com/
       - name: Install NPM dependencies
         run: npm ci
-      - name: Run the build
-        run: npm run build
+      - name: Run the packaging
+        run: npm run package
       - name: Publish to GPR
-        run: npm run publishing
+        run: npm run publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
