@@ -1,29 +1,51 @@
-import { TimeMeter } from '@/src/index';
+import { TimeMeter, MilisecondFormatter, NanosecondFormatter, LegacyFormatter } from '@/src/index';
 
-test('should TimeMeter work fine', (done) => {
-  const timeMeter = new TimeMeter(process.hrtime());
+const wait = (time: number) => new Promise((resolve) => setTimeout(resolve, time));
 
-  // Wait for 1 second.
-  setTimeout(() => {
-    let seconds, nanoseconds;
+test('should TimeMeter work fine without optionnal argument (MilisecondFormatter)', async () => {
+  const meter = new TimeMeter();
+  expect(meter.getFormatter()).toBeInstanceOf(MilisecondFormatter);
 
-    [seconds] = timeMeter.next();
-    expect(seconds).toBe(1);
+  expect(meter.next()).toBeLessThan(5);
+  expect(meter.next()).toBeLessThan(5);
 
-    [seconds, nanoseconds] = timeMeter.next();
-    expect(seconds).toBe(0);
-    expect(nanoseconds).toBeGreaterThan(0);
+  await wait(100);
+  expect(meter.next()).toBeGreaterThanOrEqual(100);
+  expect(meter.next()).toBeLessThan(5);
+});
 
-    // Wait for 0.5 second.
-    setTimeout(() => {
-      [seconds] = timeMeter.next();
-      expect(seconds).toBe(0);
+test('should TimeMeter work fine with NanosecondFormatter', async () => {
+  const meter = new TimeMeter({ formatter: new NanosecondFormatter() });
+  expect(meter.getFormatter()).toBeInstanceOf(NanosecondFormatter);
 
-      [seconds, nanoseconds] = timeMeter.next();
-      expect(seconds).toBe(0);
-      expect(nanoseconds).toBeGreaterThan(500);
+  expect(meter.next()).toBeLessThan(BigInt(5e6));
+  expect(meter.next()).toBeLessThan(BigInt(5e6));
 
-      done();
-    }, 500);
-  }, 1000);
+  await wait(100);
+  expect(meter.next()).toBeGreaterThanOrEqual(BigInt(100e6));
+  expect(meter.next()).toBeLessThan(BigInt(5e6));
+});
+
+test('should TimeMeter work fine with LegacyFormatter', async () => {
+  const meter = new TimeMeter({ formatter: new LegacyFormatter() });
+  expect(meter.getFormatter()).toBeInstanceOf(LegacyFormatter);
+
+  let [s, n] = meter.next();
+  expect(s).toBe(0);
+  expect(n).toBeLessThan(5e6);
+
+  await wait(1000);
+  [s, n] = meter.next();
+  expect(s).toBe(1);
+  expect(n).toBeLessThan(5e6);
+
+  [s, n] = meter.next();
+  expect(s).toBe(0);
+  expect(n).toBeLessThan(5e6);
+});
+
+test('should last methods works fine', () => {
+  const meter = new TimeMeter({ formatter: new NanosecondFormatter() });
+  expect(meter.next()).toBe(meter.last());
+  expect(meter.nextRaw()).toBe(meter.lastRaw());
 });
