@@ -21,7 +21,7 @@ test('should TimeMeter work fine with NanosecondFormatter', async () => {
   expect(meter.next()).toBeLessThan(BigInt(5e6));
   expect(meter.next()).toBeLessThan(BigInt(5e6));
 
-  await wait(100);
+  await wait(105);
   expect(meter.next()).toBeGreaterThanOrEqual(BigInt(100e6));
   expect(meter.next()).toBeLessThan(BigInt(5e6));
 });
