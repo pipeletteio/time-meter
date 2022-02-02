@@ -19,21 +19,25 @@
     "node": ">= 12.0.0"
   },
   "scripts": {
-    "build": "swc src -d build/package/src",
-    "build:types": "tsc -p tsconfig.types.json --emitDeclarationOnly",
-    "clear": "rm -rf build",
+    "package": "npm run package:clear && npm run package:types && npm run package:build && npm run package:copyfiles",
+    "package:build": "swc src -d build/package/src",
+    "package:types": "tsc -p tsconfig.types.json --emitDeclarationOnly",
+    "package:copyfiles": "cp package.json README.md CHANGELOG.md LICENSE build/package",
+    "package:clear": "rm -rf build/package",
+    "package:publish": "npm publish build/package",
     "type-check": "tsc --noEmit",
     "lint": "eslint -c eslint.config.js .",
     "test": "jest --config jest.config.js",
     "coverage": "jest --config jest.config.js --coverage",
-    "copyfiles": "cp package.json README.md LICENSE build/package",
-    "package": "npm run clear && npm run build:types && npm run build && npm run copyfiles",
-    "publish": "npm publish build/package",
+    "docs": "npm run docs:clear && npm run docs:build",
+    "docs:clear": "rm -rf build/docs",
+    "docs:build": "typedoc --out build/docs --theme default src/index.ts",
     "postinstall": "husky install config/husky",
     "precommit": "npm run type-check && npm run lint && npm run coverage"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.1.0",
+    "@microsoft/tsdoc": "^0.13.2",
     "@swc/cli": "^0.1.55",
     "@swc/core": "^1.2.135",
     "@swc/jest": "^0.2.17",
@@ -42,8 +46,10 @@
     "@typescript-eslint/eslint-plugin": "^5.10.1",
     "@typescript-eslint/parser": "^5.10.1",
     "eslint": "8.8.0",
+    "eslint-plugin-tsdoc": "^0.2.14",
     "husky": "^7.0.4",
     "jest": "^27.4.7",
+    "typedoc": "^0.22.11",
     "typescript": "^4.5.5"
   }
 }

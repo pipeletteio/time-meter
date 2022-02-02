@@ -11,7 +11,8 @@ module.exports = {
     'plugin:@typescript-eslint/recommended'
   ],
   plugins: [
-    '@typescript-eslint'
+    '@typescript-eslint',
+    'eslint-plugin-tsdoc'
   ],
   ignorePatterns: [
     'node_modules',
@@ -52,6 +53,8 @@ module.exports = {
     '@typescript-eslint/no-namespace': 0,
     '@typescript-eslint/no-var-requires': 0,
     'semi': 0,
-    '@typescript-eslint/semi': 2
+    '@typescript-eslint/semi': 2,
+
+    'tsdoc/syntax': 2
   }
 };

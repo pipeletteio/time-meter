@@ -10,15 +10,15 @@ on:
 jobs:
   tests:
     name: Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         node-version: [12.x, 14.x, 16.x, 17.x]
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install NPM dependencies
@@ -34,16 +34,16 @@ jobs:
 
   publish-npm:
     name: Publish on NPM
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: [tests]
     strategy:
       matrix:
         node-version: [16.x]
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Configure NPM registery with Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
           registry-url: https://registry.npmjs.org/
@@ -58,16 +58,16 @@ jobs:
 
   publish-gpr:
     name: Publish on GPR
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: [tests]
     strategy:
       matrix:
         node-version: [16.x]
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Configure GPR registery with Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
           registry-url: https://npm.pkg.github.com/
@@ -79,3 +79,21 @@ jobs:
         run: npm run publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  documentation:
+    runs-on: ubuntu-20.04
+    needs: [publish-npm, publish-gpr]
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+      - name: Generate doc
+        run: npm run docs
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/docs

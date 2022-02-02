@@ -23,9 +23,13 @@
 </p>
 
 ## Installation
+
 ```bash
 npm install @pipeletteio/time-meter
 ```
+
+## Docs:
+Read documentation [here](https://pipeletteio.github.io/time-meter).
 
 ## Example:
 ```javascript
@@ -33,45 +37,48 @@ const { TimeMeter } = require('@pipeletteio/time-meter');
 
 const meter = new TimeMeter();
 
-// Should log: [0, xxxx]
-console.log(meter.next());
-
-// Should log: [1, xxxx]
-setTimeout(() => {
-  console.log(meter.next());
-}, 1000);
+setTimeout(() => console.log(`${meter.next()}ms`), 200);
 ```
 
-A shared time meter instance can be retreived from the package:
-```javascript
-const { meter } = require('@pipeletteio/time-meter');
-```
+With Typescript:
+```typescript
+import { TimeMeter, MilisecondFormatter } from '@pipeletteio/time-meter';
 
-## API
-
-#### TimeMeter.constructor
-
-Create a new TimeMeter instance.
-
-|   argument   |              type             |                               details                               |
-|--------------|-------------------------------|---------------------------------------------------------------------|
-|    initial   | `[number, number]` or `null`  | A result of 'process.hrtime' to be used as initial time. (optional) |
-
-Return a new `TimeMeter` instance.
-
-Example:
-```javascript
-new TimeMeter(process.hrtime());
-```
-
-#### TimeMeter.prototype.next
-
-Get the time delay from the last 'next' call or instance construction.
-
-Return an array of 2 number like `[seconds, nanoseconds]: [number, number]`.
-
-Example:
-```javascript
 const meter = new TimeMeter();
-setTimeout(() => console.log(meter.next()), 1000);
+
+setTimeout(() => console.log(`${meter.next()}ms`), 200);
+```
+
+A shared time meter instance can be retreived from the package (default meter uses the milisecond format):
+```javascript
+import { meter } from '@pipeletteio/time-meter';
+```
+
+Using a custom formatter (availables: `LegacyFormatter`, `MilisecondFormatter` and `NanosecondFormatter`):
+```typescript
+import { TimeMeter, LegacyFormatter } from '@pipeletteio/time-meter';
+
+const meter = new TimeMeter({ formatter: new LegacyFormatter() });
+
+setTimeout(() => {
+  const [seconds, nanoseconds] = meter.next();
+  console.log(`${seconds}s ${nanoseconds}ns`);
+}, 200);
+```
+
+Using your own formatter:
+```typescript
+import { TimeMeter, TimeFormatterInterface } from '@pipeletteio/time-meter';
+
+class SecondFormatter implements TimeFormatterInterface {
+  static DIVIDER = BigInt(1e9);
+
+  format (ns: bigint): number {
+    return Number(ns / SecondFormatter.DIVIDER);
+  }
+}
+
+const meter = new TimeMeter({ formatter: new SecondFormatter() });
+
+setTimeout(() => console.log(`${meter.next()}s`), 1500);
 ```

@@ -9,7 +9,7 @@ test('should TimeMeter work fine without optionnal argument (MilisecondFormatter
   expect(meter.next()).toBeLessThan(5);
   expect(meter.next()).toBeLessThan(5);
 
-  await wait(100);
+  await wait(105);
   expect(meter.next()).toBeGreaterThanOrEqual(100);
   expect(meter.next()).toBeLessThan(5);
 });
