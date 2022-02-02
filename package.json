@@ -1,11 +1,11 @@
 {
   "name": "@pipeletteio/time-meter",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "A minimal Node.js time-meter to calculate time between anything",
   "private": false,
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
-  "author": "AshLePoney <20368690+AshLePoney@users.noreply.github.com>",
+  "author": "AshLePoney <AshLePoney@users.noreply.github.com>",
   "license": "MIT",
   "homepage": "https://github.com/pipeletteio/time-meter#readme",
   "repository": {
@@ -24,7 +24,7 @@
     "package:types": "tsc -p tsconfig.types.json --emitDeclarationOnly",
     "package:copyfiles": "cp package.json README.md CHANGELOG.md LICENSE build/package",
     "package:clear": "rm -rf build/package",
-    "package:publish": "npm publish build/package",
+    "package:publish": "cd build/package && npm publish --access public",
     "type-check": "tsc --noEmit",
     "lint": "eslint -c eslint.config.js .",
     "test": "jest --config jest.config.js",

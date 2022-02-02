@@ -42,7 +42,7 @@ setTimeout(() => console.log(`${meter.next()}ms`), 200);
 
 With Typescript:
 ```typescript
-import { TimeMeter, MilisecondFormatter } from '@pipeletteio/time-meter';
+import { TimeMeter } from '@pipeletteio/time-meter';
 
 const meter = new TimeMeter();
 
