@@ -1,3 +1,3 @@
-export * from './meter';
+export { TimeMeter } from './meter';
 
-export * from './formatters';
+export { MilisecondFormatter, NanosecondFormatter, LegacyFormatter } from './formatters';
