@@ -1,6 +1,6 @@
 {
   "name": "@pipeletteio/time-meter",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A minimal Node.js time-meter to calculate time between anything",
   "private": false,
   "main": "./src/index.js",
